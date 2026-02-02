@@ -11,4 +11,8 @@ module FA2HA();
     #10;a=0;b=1;c=0;
     #10;a=1;b=1;c=0;
   end 
+  initial begin
+    $dumpfile("BLEACH.vcd";
+              $dumpvarse("0,FA2HA);
+                         #100 $finish:
 endmodule
