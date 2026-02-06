@@ -1,6 +1,6 @@
 module encoder_8x3_tb();
   reg [7:0]a;
-  wire [3:0]b;
+  wire [2:0]b;
   reg en;
   encoder_8x3 dut (a,en,b);
   initial begin
