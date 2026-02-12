@@ -8,7 +8,7 @@ module siso(d,res,clk,y);
       q<=4'b0000;
     end
     else begin
-      q<=q<<1;// or q<={d,q[2:0];
+      q<=q<<1;// or q<={d,q[2:0]};
       q[0]<=d;//
     end
    end
