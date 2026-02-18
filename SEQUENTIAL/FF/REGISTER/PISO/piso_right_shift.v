@@ -3,16 +3,17 @@ module piso(d,res,clk,load,y);
   input res,clk,load;
   output reg y;
   reg [3:0]q;
-  always@(posedge clk)begin
+  always@(posedge clk or posedge res)begin
     if(res)begin
+      y<=1'b0;
       q<=4'b0000;
     end
     else if(load)begin
         q<=d;
     end
       else begin
-        y<=q[0]
         q<=q>>1;
       end
+    y<=q[0];
   end
 endmodule
