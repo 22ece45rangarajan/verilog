@@ -38,7 +38,7 @@ module mealey_non_overlap(input a,res,clk,output reg y);
           nxt_state=s0;
         end
         else begin
-          nxt_state=s0;
+          nxt_state=s2;
         end
       default:nxt_state=s0;
     endcase
