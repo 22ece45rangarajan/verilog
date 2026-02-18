@@ -11,8 +11,8 @@ module piso(d,res,clk,load,y);
         q<=d;
     end
       else begin
-      q<=q>>1;
-      y<=q[0];
-   end
+        y<=q[0]
+        q<=q>>1;
+      end
   end
 endmodule
