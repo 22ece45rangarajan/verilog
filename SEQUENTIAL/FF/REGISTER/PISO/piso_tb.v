@@ -6,9 +6,10 @@ module piso_tb();
   always #5 clk= ~clk;
   initial begin
     $monitor("time=%t,d=%b,res=%b,clk=%b,load=%b,y=%b",$time,d,res,clk,load,y);
-  load=0;d=4'b0000;res=1;clk=0;
-  #5;res=0;
-  #10;d=4'b1001;load=1;
+  load=0;d=4'b0000;res=0;clk=0;
+  #0;res=1;
+  #10;res=0;
+  #25;d=4'b1001;load=1;
   #5;load=0;
   #45;d=4'b1010;load=1;
   #5;load=0;
