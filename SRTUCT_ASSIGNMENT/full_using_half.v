@@ -1,3 +1,4 @@
+//Design a full adder using a half adder.
 module ha(input a,b,output SUM,CARRY);
   assign SUM=a^b;
   assign CARRY=a&b;
