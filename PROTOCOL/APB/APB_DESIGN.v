@@ -1,3 +1,8 @@
+//╔═══════════════════════════════════╗
+//║  Module : top_APB                 ║
+//║  Desc   : APB_top_module          ║
+//╚═══════════════════════════════════╝
+
 module top_APB(P_clk,P_reset,transfer,P_write,P_add,PW_data,PR_data,P_slave,P_enable,P_slerror,P_ready);
   input P_clk,P_reset,transfer,P_write;
   input   [7:0]P_add;
@@ -6,11 +11,19 @@ module top_APB(P_clk,P_reset,transfer,P_write,P_add,PW_data,PR_data,P_slave,P_en
   output  [1:0]P_slave;
   output  P_enable,P_slerror,P_ready;
   wire   P_slverr;
-
+  
+// --- master__instantiation ---
+  
   master_APB master(.P_clk(P_clk),.P_reset(P_reset),.transfer(transfer),.P_write(P_write),.P_add(P_add),.PW_data(PW_data),.P_sl(P_slave),.P_enable(P_enable),.P_slerror(P_slerror),.P_ready(P_ready));
+  
+// --- slave__instantiation --- 
   slave_APB slave(.P_clk(P_clk),.P_reset(P_reset),.P_sel(P_slave),.P_enable(P_enable),.P_write(P_write),.P_add(P_add),.PW_data(PW_data),.PR_data(PR_data),.P_ready(P_ready),.P_slverr(P_slerror));
 endmodule
 
+
+//======================================
+// -------__APB_MASTER_MODULE__---------
+//======================================
 
 module master_APB(P_clk,P_reset,transfer,P_write,P_add,PW_data,P_sl,P_enable,P_slerror,P_ready);
   input P_clk,P_reset,P_write,P_slerror,P_ready,transfer;
@@ -24,12 +37,17 @@ module master_APB(P_clk,P_reset,transfer,P_write,P_add,PW_data,P_sl,P_enable,P_s
                   ACCESS=2'b11;
   reg [1:0]state,nxt_state;
   always@(posedge P_clk)begin
-    if(P_reset)begin
+    if(!P_reset)begin
       state<=IDEAL;
     end
     else
       state<=nxt_state;
-  end
+  end  
+  
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// ---------__NEXT_STATE_LOGIC__----------
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  
   always@(*)begin
       //nxt_state<=state;
       P_enable=0;
@@ -68,14 +86,17 @@ module master_APB(P_clk,P_reset,transfer,P_write,P_add,PW_data,P_sl,P_enable,P_s
       endcase
   end
 endmodule
-    
+  
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//----------__SLAVE_SELECTOR__-------------
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
       
 module slave_selecter(P_add,P_reset,P_select);
   input [7:0]P_add;
   input P_reset;
   output reg [3:1]P_select;
   always@(*)begin
-    if(P_reset)begin
+    if(!P_reset)begin
       P_select=0;
     end
     else  begin
@@ -91,6 +112,9 @@ module slave_selecter(P_add,P_reset,P_select);
   end
 endmodule
 
+//..................................
+//..-------__ SLAVE_001__---------..
+//..................................
 
 module slave_P_sel_1(P_clk,P_reset,P_sel_1,P_enable,P_write,P_add,PW_data,PR_data_1,P_ready_1,P_slverr_1);
   input P_clk,P_reset,P_enable,P_write;
@@ -107,7 +131,7 @@ module slave_P_sel_1(P_clk,P_reset,P_sel_1,P_enable,P_write,P_add,PW_data,PR_dat
   reg write_reg;
   reg[5:0] memo[255:0];
   always@(posedge P_clk)begin
-    if(P_reset)
+    if(!P_reset)
       P_slverr_1<=0;
     else begin
       if(P_add>8'd255)
@@ -117,7 +141,7 @@ module slave_P_sel_1(P_clk,P_reset,P_sel_1,P_enable,P_write,P_add,PW_data,PR_dat
     end
   end
   always@(posedge P_clk)begin
-    if(P_reset)begin
+    if(!P_reset)begin
       state      <=0;
       P_ready_1  <=0;
       PR_data_1  <=0;
@@ -127,6 +151,12 @@ module slave_P_sel_1(P_clk,P_reset,P_sel_1,P_enable,P_write,P_add,PW_data,PR_dat
       //nxt_state<=state;
     end
   end
+
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// ------__SLAVE_001_STATE_LOGIC__--------
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  
+  
   always@(*)begin
     nxt_state = state;
       case(state)
@@ -164,6 +194,10 @@ module slave_P_sel_1(P_clk,P_reset,P_sel_1,P_enable,P_write,P_add,PW_data,PR_dat
   end
 endmodule
 
+//..................................
+//..-------__ SLAVE_010__---------..
+//..................................
+
 module slave_P_sel_2(P_clk,P_reset,P_sel_2,P_enable,P_write,P_add,PW_data,PR_data_2,P_ready_2,P_slverr_2);
   input P_clk,P_reset,P_enable,P_write;
   input P_sel_2;
@@ -179,7 +213,7 @@ module slave_P_sel_2(P_clk,P_reset,P_sel_2,P_enable,P_write,P_add,PW_data,PR_dat
   reg write_reg;
   reg[5:0] memo[255:0];
   always@(posedge P_clk)begin
-    if(P_reset)
+    if(!P_reset)
       P_slverr_2<=0;
     else begin
       if(P_add>8'd255)
@@ -189,7 +223,7 @@ module slave_P_sel_2(P_clk,P_reset,P_sel_2,P_enable,P_write,P_add,PW_data,PR_dat
     end
   end
   always@(posedge P_clk)begin
-    if(P_reset)begin
+    if(!P_reset)begin
       state      <=0;
       P_ready_2  <=0;
       PR_data_2  <=0;
@@ -199,6 +233,11 @@ module slave_P_sel_2(P_clk,P_reset,P_sel_2,P_enable,P_write,P_add,PW_data,PR_dat
       state    <= nxt_state;
     end
   end
+  
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// ------__SLAVE_010_STATE_LOGIC__--------
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  
   always@(*)begin
     nxt_state = state;
       case(state)
@@ -234,6 +273,12 @@ module slave_P_sel_2(P_clk,P_reset,P_sel_2,P_enable,P_write,P_add,PW_data,PR_dat
   end
 endmodule
 
+
+//..................................
+//..-------__ SLAVE_011__---------..
+//..................................
+
+
 module slave_P_sel_3(P_clk,P_reset,P_sel_3,P_enable,P_write,P_add,PW_data,PR_data_3,P_ready_3,P_slverr_3);
   input P_clk,P_reset,P_enable,P_write;
   input P_sel_3;
@@ -249,7 +294,7 @@ module slave_P_sel_3(P_clk,P_reset,P_sel_3,P_enable,P_write,P_add,PW_data,PR_dat
   reg write_reg;
   reg[5:0] memo[255:0];
   always@(posedge P_clk)begin
-    if(P_reset)
+    if(!P_reset)
       P_slverr_3<=0;
     else begin
       if(P_add>8'd255)
@@ -259,7 +304,7 @@ module slave_P_sel_3(P_clk,P_reset,P_sel_3,P_enable,P_write,P_add,PW_data,PR_dat
     end
   end
   always@(posedge P_clk)begin
-    if(P_reset)begin
+    if(!P_reset)begin
       state     <=0;
       P_ready_3 <=0;
       PR_data_3 <=0;
@@ -269,6 +314,11 @@ module slave_P_sel_3(P_clk,P_reset,P_sel_3,P_enable,P_write,P_add,PW_data,PR_dat
       //nxt_state<=state;
     end
   end
+  
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+// ------__SLAVE_011_STATE_LOGIC__--------
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  
   always@(*)begin
     nxt_state = state;
       case(state)
@@ -304,6 +354,10 @@ module slave_P_sel_3(P_clk,P_reset,P_sel_3,P_enable,P_write,P_add,PW_data,PR_dat
   end
 endmodule
 
+//======================================
+// ------__APB_TOP_SLAVE_MODULE__-------
+//======================================
+
 
 module slave_APB(P_clk,P_reset,P_sel,P_enable,P_write,P_add,PW_data,PR_data,P_ready,P_slverr);
   input P_clk,P_reset,P_enable,P_write;
@@ -321,15 +375,28 @@ module slave_APB(P_clk,P_reset,P_sel,P_enable,P_write,P_add,PW_data,PR_data,P_re
   slave_P_sel_2  sl2(.P_clk(P_clk),.P_reset(P_reset),.P_sel_2(P_select[2]),.P_enable(P_enable),.P_write(P_write),.P_add(P_add),.PW_data(PW_data),.PR_data_2(PR_data_2),.P_ready_2(P_ready_2),.P_slverr_2(P_slverr_2));
   slave_P_sel_3  sl3(.P_clk(P_clk),.P_reset(P_reset),.P_sel_3(P_select[3]),.P_enable(P_enable),.P_write(P_write),.P_add(P_add),.PW_data(PW_data),.PR_data_3(PR_data_3),.P_ready_3(P_ready_3),.P_slverr_3(P_slverr_3));
 
+///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//----__PR_data__—_-__read_data_mux__----
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   assign  PR_data = P_select[1] ? PR_data_1:
     P_select[2] ? PR_data_2:
     P_select[3] ? PR_data_3:6'b0;
-
+  
+///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//----__P_ready__—_-__ready_signal_mux__----
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   assign  P_ready = P_select[1]  ? P_ready_1:
     P_select[2] ? P_ready_2:
     P_select[3] ? P_ready_3:0;
-
+  
+///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//----__P_slverr__—_-__error_signal_mux__----
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
    assign P_slverr = P_select[1] ? P_slverr_1:
     P_select[2] ? P_slverr_2:
     P_select[3] ? P_slverr_3:0;
+  
 endmodule
