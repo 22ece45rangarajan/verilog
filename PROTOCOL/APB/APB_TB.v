@@ -1,3 +1,8 @@
+//╔═══════════════════════════════════╗
+//║  Module : APB_tb                  ║
+//║  Desc   : APB_test_bench          ║
+//╚═══════════════════════════════════╝
+
 module APB_tb();
   reg P_clk,P_reset,transfer,P_write;
   reg   [7:0]P_add;
@@ -23,18 +28,26 @@ module APB_tb();
     $monitor("time=%0t || P_clk=%b || P_reset=%b || transfer=%b || P_write =%b || P_add=%d || PW_data=%d || PR_data=%d || P_slave=%b || P_enable=%b || P_slerror==%b || P_ready=%b",$time,P_clk,P_reset,transfer,P_write,P_add,PW_data,PR_data,P_slave,P_enable,P_slerror,P_ready); 
   end 
   
+//======================================
+// -------__TASK_TO_RESET_DATA__--------
+//======================================
+  
     task reset_task;
       begin
-      P_reset =1;
+      P_reset =0;
       transfer=0;
       P_write =0;
       P_add   =0;
       PW_data =0;
       @(posedge P_clk); #1
-      P_reset =0;
+      P_reset =1;
       @(posedge P_clk);
       end
     endtask
+  
+//======================================
+// -------__TASK_TO_WRITE_DATA__--------
+//======================================
     
     task writing_task;
         input [7:0]adds;
@@ -54,6 +67,10 @@ module APB_tb();
       end
     endtask
     
+//======================================
+// -------__TASK_TO_READ_DATA__---------
+//======================================
+  
     
     task reading_task;
         input [7:0]adds;
@@ -73,6 +90,12 @@ module APB_tb();
     endtask
   
   initial begin
+    
+      
+//======================================
+// ----------__INPUT_DATA__------------
+//======================================
+
     
     reset_task;
      
